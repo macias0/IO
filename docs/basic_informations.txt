@@ -1,0 +1,44 @@
+Tutaj zapisujê wstêpne informacjê, na których mo¿emy siê oprzeæ pracuj¹æ nad gr¹. Wstêpnie koncept wydaje siê byæ jasny i myœlê, ¿e mo¿na zacz¹æ implementacjê. Zadania dzielimy miêdzy GUI i logikê.
+
+
+GUI
+=====
+
+Elementy gry:
+Ekran g³ówny
+Mo¿liwoœæ wpisania nazwy
+Rozpoczêcie gry (jeden przycisk wystarczy?)
+Obs³u¿enie przerwania po³¹czenia w trakcie gry
+Ewentualne wznowienie rozgrywki. Np. mo¿liwe tak d³ugo jak czeka drugi gracz.
+Rozgrywka toczy siê u jednego z graczy, drugi zostaje tylko informowany o stanie gry
+Jedna maszyna stanów, która bêdzie mog³a byæ sterowana przez rozwój gry, albo ¿¹dania przez internet (ola³bym tu zabezpieczenia)
+Kolejnoœæ kto pierwszy mo¿e byæ sta³a
+Logika informuje QML o aktualnym stanie wszystkich zmiennych gry, QML reaguje gdy dzieje siê jakaœ akcja, np. strzelenie w pole. Mówi o tym logice, logika przestawia zmienne i QML siê aktualizuje
+Mo¿liwoœæ poddania siê, dzia³anie podobne jak przy zerwaniu po³¹czenia, ale inna informacja
+Zakoñczenie gry to znów to samo zachowanie - po³¹czenie zostaje zerwane od razu po przejœciu do okna koñcowego
+
+Nie wiem jak chcia³bys to zrobiæ, ale ja bym raczej logikê zmiany okien zostawi³ w QML. jedynie aktualizowa³bym stan gry z wykorzystaniem C++
+
+
+----------------
+
+Logika
+==========
+
+Mo¿liwoœæ ³¹czenia dwóch gier ze sob¹. Chyba wystarczy nawet lokalnie, tak jak w Expo, albo IP na sztywno. Byle by to dzia³a³o.
+
+Funkcje dla QML
+Ustawianie nazwy gracza
+Rozpoczynanie nowej gry (zaczyna szukanie gry i ³¹czenie z innym graczem)
+Odbieranie zmienn¹ stanu, czyja jest kolejka
+Informowanie o ustawieniu statków
+Odbieranie informacji o rozpoczêciu gry
+Odbieranie informacji o zmianach na planszy
+Informowanie o ¿¹danej akcji, jakie pole zosta³o klikniête
+Koñczenie gry i odbieranie informacji o koñcu + powód (zerwanie sieci, poddanie siê, zwyciêstwo, przegrana)
+
+
+Pod spodem zrobi³bym maszynê stanów na zasadzie,
+Aktualnie jestem w pozycji ruch gracza nr 1, idê do akcji atakuj, potem idê do akcji uszkodzenie statku, albo od razu do ruchu kolejnego gracza.
+I na ka¿d¹ zmianê stanu wysy³asz odpowiednie informacje do QML, ¿eby wiedzia³ co ma wyœwietlaæ. Wydaje mi siê to bardzo fajnym rozwi¹zaniem, bo jakby samo za ciebie pamiêta o wszystkim
+
