@@ -4,7 +4,8 @@ QT += qml quick
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    cpp/basichelper.cpp
+    cpp/basichelper.cpp \
+    cpp/mediator.cpp
 
 RESOURCES += qml.qrc \
     qml/statki.qrc
@@ -32,4 +33,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    cpp/basichelper.h
+    cpp/basichelper.h \
+    cpp/mediator.h \
+    cpp/eview.h
