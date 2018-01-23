@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/">
+        <file>Statki.qml</file>
+    </qresource>
+</RCC>
