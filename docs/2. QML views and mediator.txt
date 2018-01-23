@@ -1,0 +1,4 @@
+"ViewsManager" to obiekt w QML odpowiedzialny z zmiane aktualnego okna. Wystarczy ustawic zmienna activeView i aktywne okienko zostanie plynnie zmienione
+
+Mediator to moj pomysl na polaczenie logiki z C++ i GUI w QML. Obiekt ten bedzie wystawial wszystkie funkcje i property, z ktorych musi korzystac QML
+Jesli jeden Mediator okaze sie byc zbyt rozwlekly i warto bedzie dodac kolejnego, to jest to jak najbardziej ok, zeby grupowac funkcje i zmienne wedlug kategorii
