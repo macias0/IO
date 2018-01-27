@@ -10,5 +10,7 @@
         <file>Assets/credits.txt</file>
         <file>Assets/Fonts/It is Definitely Possible - TTF.ttf</file>
         <file>Assets/Images/PaperBoatPhoto.jpg</file>
+        <file>Assets/Images/water.jpeg</file>
+        <file>Assets/Images/grid.png</file>
     </qresource>
 </RCC>
