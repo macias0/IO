@@ -6,5 +6,9 @@
         <file>Views/Game.qml</file>
         <file>Views/GameMenu.qml</file>
         <file>Views/View.qml</file>
+        <file>Common/Button.qml</file>
+        <file>Assets/credits.txt</file>
+        <file>Assets/Fonts/It is Definitely Possible - TTF.ttf</file>
+        <file>Assets/Images/PaperBoatPhoto.jpg</file>
     </qresource>
 </RCC>

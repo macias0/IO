@@ -10,9 +10,14 @@ EView::View Mediator::activeView()
     return m_activeView;
 }
 
-void Mediator::requestNewView(int view)
+void Mediator::startGame()
 {
-    setActiveView(static_cast<EView::View>(view));
+    setActiveView(EView::Game);
+}
+
+void Mediator::endGame()
+{
+    QCoreApplication::quit();
 }
 
 void Mediator::setActiveView(EView::View activeView)

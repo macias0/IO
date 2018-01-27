@@ -6,20 +6,14 @@ import EView 1.0
 Item {
     id: statkiMain
 
+    FontLoader {
+        id: statkiFont
+        source: 'qrc:/Assets/Fonts/It is Definitely Possible - TTF.ttf'
+    }
+
     ViewsManager {
         id: viewsManager
         anchors.fill: parent
         activeView: mediator.activeView
-        onActiveViewChanged: {
-            console.log(activeView)
-        }
-    }
-
-    MouseArea {
-        anchors.fill: parent
-        onClicked: {
-            basicHelper.tryMe(200123);
-            mediator.requestNewView(EView.Game)
-        }
     }
 }

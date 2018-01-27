@@ -2,6 +2,7 @@
 #define MEDIATOR_H
 
 #include <QObject>
+#include <QCoreApplication>
 
 #include "eview.h"
 
@@ -16,7 +17,8 @@ public:
 
     EView::View activeView();
 
-    Q_INVOKABLE void requestNewView(int view);
+    Q_INVOKABLE void startGame();
+    Q_INVOKABLE void endGame();
 
 signals:
     void activeViewChanged(EView::View view);
