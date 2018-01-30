@@ -51,7 +51,7 @@ View {
                 height: button1.height
                 text: 'Wyjście'
                 onClicked: {
-                    mediator.endGame()
+                    mediator.exitGame()
                 }
             }
         }

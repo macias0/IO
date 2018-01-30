@@ -7,10 +7,6 @@ Item {
     id: viewsManager
 
     property int activeView: 0
-    property var views: [
-        mainMenu,
-        game
-    ]
 
     Views.MainMenu {
         id: mainMenu

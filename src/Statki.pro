@@ -35,4 +35,5 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 HEADERS += \
     cpp/basichelper.h \
     cpp/mediator.h \
-    cpp/eview.h
+    cpp/eview.h \
+    cpp/etile.h

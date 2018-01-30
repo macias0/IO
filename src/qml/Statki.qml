@@ -6,6 +6,8 @@ import EView 1.0
 Item {
     id: statkiMain
 
+    readonly property int boardSize: 10
+
     FontLoader {
         id: statkiFont
         source: 'qrc:/Assets/Fonts/It is Definitely Possible - TTF.ttf'

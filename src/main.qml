@@ -3,8 +3,8 @@ import QtQuick.Window 2.2
 
 Window {
     visible: true
-    width: 640
-    height: 480
+    width: 1066
+    height: 600
     title: qsTr("Statki")
 
     Statki {
