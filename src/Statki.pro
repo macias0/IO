@@ -1,11 +1,12 @@
 TEMPLATE = app
 
-QT += qml quick
+QT += qml quick network
 CONFIG += c++11
 
 SOURCES += main.cpp \
     cpp/basichelper.cpp \
-    cpp/mediator.cpp
+    cpp/mediator.cpp \
+    cpp/network.cpp
 
 RESOURCES += qml.qrc \
     qml/statki.qrc
@@ -36,4 +37,5 @@ HEADERS += \
     cpp/basichelper.h \
     cpp/mediator.h \
     cpp/eview.h \
-    cpp/etile.h
+    cpp/etile.h \
+    cpp/network.h

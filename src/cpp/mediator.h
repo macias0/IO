@@ -6,6 +6,7 @@
 
 #include "eview.h"
 #include "etile.h"
+#include "network.h"
 
 class Mediator : public QObject
 {
@@ -58,6 +59,8 @@ private:
 
     // current user's action
     bool m_userPlacesShips;
+
+    Network m_network;
 };
 
 #endif // MEDIATOR_H
