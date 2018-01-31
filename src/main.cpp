@@ -6,6 +6,8 @@
 #include "cpp/basichelper.h"
 #include "cpp/mediator.h"
 
+#include "cpp/networkaction.h"
+
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);

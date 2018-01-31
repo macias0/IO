@@ -28,11 +28,11 @@ public:
 
 
 signals:
-    void messageReceived(QByteArray a_message);
+    void messageReceived(QByteArray &a_message);
 
 
-//private slots:
-//    void newConnection();
+private slots:
+    void readyRead();
 
 private:
 
@@ -50,7 +50,7 @@ private:
     QScopedPointer<QTcpServer> m_server;
     QScopedPointer<QTcpSocket> m_client;
 
-
+    quint16 m_messageSize = 0;
 
 };
 

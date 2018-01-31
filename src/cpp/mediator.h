@@ -4,8 +4,10 @@
 #include <QObject>
 #include <QCoreApplication>
 
+#include "commons.h"
 #include "eview.h"
 #include "etile.h"
+#include "networkaction.h"
 #include "network.h"
 
 class Mediator : public QObject
@@ -51,9 +53,7 @@ private:
     // list of target amounts of ships per type
     const QList<int> m_shipsTarget = {4, 3, 2, 1};
 
-    static const int m_boardWidth = 10;
-    static const int m_boardHeight = m_boardWidth;
-    static const int m_boardSize = m_boardWidth * m_boardHeight;
+
     ETile::Tile m_playerBoard[m_boardSize];
     ETile::Tile m_enemyBoard[m_boardSize];
 
