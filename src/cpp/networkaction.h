@@ -17,17 +17,22 @@ public:
 
     union NetworkActionData
     {
-        ETile::Tile board[m_boardSize];
+        ETile::Tile board[g_boardSize];
         QPoint point;
+
+        //because of compiler error
         NetworkActionData(){memset( this, 0, sizeof( NetworkActionData ) );}
     };
 
 
-    NetworkAction();
+    NetworkAction(const NetworkActionType a_networkActionType = NetworkActionType::Surrend);
+    NetworkAction(const QPoint &a_point);
+    NetworkAction(const ETile::Tile (&a_board)[g_boardSize]);
     //for implicit conversion from QByteArray
     NetworkAction(const QByteArray &a_data);
 
-    NetworkActionType m_networkAction;
+
+    NetworkActionType m_networkActionType;
     NetworkActionData m_data;
 
     //for implicit conversion to QByteArray

@@ -54,8 +54,8 @@ private:
     const QList<int> m_shipsTarget = {4, 3, 2, 1};
 
 
-    ETile::Tile m_playerBoard[m_boardSize];
-    ETile::Tile m_enemyBoard[m_boardSize];
+    ETile::Tile m_playerBoard[g_boardSize];
+    ETile::Tile m_enemyBoard[g_boardSize];
 
     // current user's action
     bool m_userPlacesShips;

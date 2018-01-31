@@ -19,7 +19,7 @@ void Mediator::startGame()
 {
     // initialize
     m_shipsNeeded = m_shipsTarget;
-    for (int i = 0 ; i < m_boardSize ; i++)
+    for (int i = 0 ; i < g_boardSize ; i++)
         m_playerBoard[i] = ETile::Empty;
 
     // TODO clear all rendered ships from previous game with removeShip() signal
@@ -81,5 +81,5 @@ void Mediator::setActiveView(EView::View activeView)
 
 int Mediator::positionToIndex(const int &x, const int &y)
 {
-    return x + y * m_boardWidth;
+    return x + y * g_boardWidth;
 }
