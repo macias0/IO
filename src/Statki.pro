@@ -4,7 +4,6 @@ QT += qml quick network
 CONFIG += c++11
 
 SOURCES += main.cpp \
-    cpp/basichelper.cpp \
     cpp/mediator.cpp \
     cpp/network.cpp \
     cpp/networkaction.cpp
@@ -35,7 +34,6 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 HEADERS += \
-    cpp/basichelper.h \
     cpp/mediator.h \
     cpp/eview.h \
     cpp/etile.h \

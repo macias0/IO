@@ -19,5 +19,4 @@ Item {
         anchors.fill: parent
         isActive: activeView == EView.Game
     }
-
 }

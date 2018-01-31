@@ -33,10 +33,19 @@ View {
             Button {
                 id: button1
                 width: buttonsContainer.width * 3 / 4
-                height: buttonsContainer.height / 5.5
-                text: 'Graj'
+                height: buttonsContainer.height / 6.5
+                text: 'Stwórz grę'
                 onClicked: {
-                    mediator.startGame()
+                    mediator.createServer()
+                }
+            }
+
+            Button {
+                width: button1.width
+                height: button1.height
+                text: 'Dołącz do gry'
+                onClicked: {
+                    mediator.joinGame()
                 }
             }
 

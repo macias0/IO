@@ -34,7 +34,7 @@ public:
 
 
 signals:
-    void messageReceived(QByteArray &a_message);
+    void messageReceived(const QByteArray &a_message);
 
 
 private slots:

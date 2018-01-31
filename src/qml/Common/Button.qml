@@ -4,15 +4,8 @@ Item {
     id: button
 
     property string text: ''
+    property color buttonColor: 'white'
     signal clicked()
-
-//    radius: height / 2
-//    border.width: height / 40
-//    border.color: "black"
-//    gradient: Gradient {
-//        GradientStop { position: 0.0; color: "lightsteelblue" }
-//        GradientStop { position: 1.0; color: "blue" }
-//    }
 
     Text {
         id: text
@@ -21,7 +14,7 @@ Item {
         font.pixelSize: height
         text: parent.text
         font.family: statkiFont.name
-        color: 'white'
+        color: buttonColor
         verticalAlignment: Text.AlignVCenter
         horizontalAlignment: Text.AlignLeft
     }
@@ -38,7 +31,7 @@ Item {
             x: (opacity - 1) * width
             width: parent.width
             height: parent.height
-            color: 'white'
+            color: buttonColor
             opacity: mouseArea.containsMouse
             Behavior on opacity { NumberAnimation { duration: 200 } }
 

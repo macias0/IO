@@ -1,22 +1,8 @@
 import QtQuick 2.5
-
-/* to implement (usage of):
-
-    Q_PROPERTY(QList<int>  shipsNeeded READ shipsNeeded NOTIFY shipsNeededChanged)
-
-    // called when user presses the mouse down
-    Q_INVOKABLE void toggleFirstTile(QList<int> position);
-    // called every time user drags mouse over another tile while holding the mouse down
-    Q_INVOKABLE void toggleTile(QList<int> position);
-
-signals:
-    void renderShip(int id, int x, int y, int length, bool horizontal);
-    void removeShip(int id);
-
-  */
+import 'qrc:/Common'
 
 View {
-    id: game
+    id: gamePrepareBoard
 
     // readonly property var neededShips: {return [4, 3, 2, 1]}
 
@@ -52,7 +38,6 @@ View {
         target: mediator
 
         onShipsNeededChanged: {
-            console.log("Needed ships:", mediator.shipsNeeded)
         }
         onRenderShip: { //(int id, int x, int y, int length, bool horizontal);
             privateSpace.renderedShips[id] = smallShipComponent.createObject(boardMouseArea, {"posX": x, "posY": y});
@@ -60,9 +45,13 @@ View {
         onRemoveShip: { //(int id);
             privateSpace.renderedShips[id].destroy()
         }
+        onTileAttacked: {
+            console.log("tile was attacked: ", x, y)
+        }
     }
 
     Image {
+        id: gameBackground
         anchors.fill: parent
         source: 'qrc:/Assets/Images/water.jpeg'
         fillMode: Image.PreserveAspectCrop
@@ -70,16 +59,20 @@ View {
 
     Image {
         id: boardImage
-        anchors.fill: parent
-        anchors.margins: Math.min(parent.width, parent.height) / 4
+        x: (mediator.preparingBoardPhase ? (parent.width - width) / 2 : parent.width * 8 / 18 - width)
+        y: (parent.height - height) / 2
+        width: Math.min(parent.width / 3, parent.height * 2 / 3)
+        height: width
         source: 'qrc:/Assets/Images/grid.png'
         mipmap: true
         fillMode: Image.PreserveAspectFit
         readonly property double boardPixelSize: Math.min(width, height)
+        Behavior on x { NumberAnimation { duration: 500 } }
 
         MouseArea {
             id: boardMouseArea
             anchors.centerIn: parent
+            enabled: mediator.preparingBoardPhase
             width: Math.min(parent.width, parent.height)
             height: width
             property int lastModifiedX
@@ -116,6 +109,54 @@ View {
                     mediator.toggleTile(posX, posY)
                 }
             }
+        }
+    }
+
+    Image {
+        id: enemyBoardImage
+        x: parent.width * 10 / 18
+        y: (parent.height - height) / 2
+        width: Math.min(parent.width / 3, parent.height * 2 / 3)
+        height: width
+        source: 'qrc:/Assets/Images/grid.png'
+        mipmap: true
+        fillMode: Image.PreserveAspectFit
+        readonly property double boardPixelSize: Math.min(width, height)
+        opacity: (mediator.preparingBoardPhase ? 0 : 1)
+        Behavior on opacity { NumberAnimation { duration: 500 } }
+
+        MouseArea {
+            enabled: !mediator.preparingBoardPhase && mediator.yourTurn
+            anchors.fill: parent
+            onPressed: {
+                var posX = Math.floor((mouseX / width) * boardSize)
+                var posY = Math.floor((mouseY / height) * boardSize)
+                if ((posX < 0)
+                        || (posX >= boardSize)
+                        || (posY < 0 )
+                        || (posY >= boardSize)) {
+                    return
+                }
+                mediator.attackTile(posX, posY)
+                console.log("attacking tile:", posX, posY)
+            }
+        }
+    }
+
+
+
+    Button {
+        // TODOGUI make the button horizontally centered
+        x: (parent.width - width) / 2
+        y: boardImage.y + boardImage.paintedHeight + (parent.height - boardImage.y - boardImage.paintedHeight - height) / 2
+        width: boardImage.paintedWidth / 2
+        height: boardImage.paintedHeight / 3
+        text: 'Gotowe'
+        opacity: (enabled ? 1 : 0.5)
+        Behavior on opacity { NumberAnimation { duration: 500 } }
+        enabled: mediator.boardIsValid
+        onClicked: {
+            mediator.playerIsReady()
         }
     }
 }

@@ -3,7 +3,6 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
-#include "cpp/basichelper.h"
 #include "cpp/mediator.h"
 
 #include "cpp/networkaction.h"
@@ -13,8 +12,6 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
     QQmlApplicationEngine engine;
 
-    BasicHelper basicHelper;
-    engine.rootContext()->setContextProperty("basicHelper", &basicHelper);
     Mediator mediator;
     engine.rootContext()->setContextProperty("mediator", &mediator);
 
