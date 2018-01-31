@@ -14,7 +14,13 @@ class Network : public QObject
 {
     Q_OBJECT
 public:
-    explicit Network(QObject *parent = nullptr);
+
+    static Network& getSingleton()
+    {
+        static Network singleton;
+        return singleton;
+    }
+
     ~Network();
 
     void startServer();
@@ -35,6 +41,10 @@ private slots:
     void readyRead();
 
 private:
+    //for singleton
+    explicit Network(QObject *parent = nullptr);
+    Network(const Network&) = delete;
+    void operator=(const Network&) = delete;
 
     static const quint16 m_port = 6969;
 

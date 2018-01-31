@@ -10,7 +10,7 @@ class NetworkAction
 public:
     enum NetworkActionType
     {
-        Shot =0,
+        Shot = 0,
         BoardExchange,
         Surrend
     };

@@ -60,7 +60,7 @@ private:
     // current user's action
     bool m_userPlacesShips;
 
-    Network m_network;
+    Network &m_network = Network::getSingleton();
 };
 
 #endif // MEDIATOR_H
