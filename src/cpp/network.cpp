@@ -103,9 +103,14 @@ void Network::sendMessage(const QByteArray &a_message)
     m_socket->write(data);
 }
 
-bool Network::isConnected()
+bool Network::isConnected() const
 {
     return m_networkState != NetworkState::None && m_socket->state() == QAbstractSocket::ConnectedState;
+}
+
+Network::NetworkState Network::getNetworkState() const
+{
+    return m_networkState;
 }
 
 void Network::prepareSocket()

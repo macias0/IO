@@ -66,7 +66,7 @@ void Mediator::startGame()
         m_playerBoard[i] = ETile::Empty;
     setBoardIsValid(false);
     setPreparingBoardPhase(true);
-    setWaitingForEnemyBoard(false);
+    setWaitingForEnemyBoard(true);
 
     // TODO clear all rendered ships from previous game with removeShip() signal
 
@@ -84,11 +84,11 @@ void Mediator::playerIsReady()
     //sharing board with other player
     m_network.sendMessage(NetworkAction(m_playerBoard));
 
-    // TODO remember to set waitingForEnemyBoard while waiting for the other player to be ready
     // set "yourTurn" variable
-
     setPreparingBoardPhase(false);
-    setYourTurn(true);
+
+    if(m_network.getNetworkState() == Network::Server) //server always has first move
+        setYourTurn(true);
 }
 
 void Mediator::toggleFirstTile(int x, int y)
@@ -138,8 +138,28 @@ void Mediator::toggleTile(int x, int y)
 
 void Mediator::attackTile(int x, int y)
 {
-    // TODO handle request to attack
+    //TODO Forbid shooting when waitingForEnemyBoard == true
+
     // if tile was already attacked, ignore - player has to choose other tile
+    if( m_enemyBoard[positionToIndex(x,y)] < ETile::ShotEmpty)
+    {
+        qDebug() << "Sending attack message";
+        m_network.sendMessage(NetworkAction(QPoint(x,y)));
+    }
+
+    setYourTurn(false); //TODO not sure (?)
+
+
+    //TODO create other function that renders shots if not exists
+    //and execute here
+
+}
+
+void Mediator::surrender()
+{
+    m_network.sendMessage(NetworkAction());
+
+    //TODO shutdown server / disconnect
 }
 
 void Mediator::setActiveView(EView::View a_activeView)
@@ -199,14 +219,18 @@ void Mediator::enemyActionReceived(const NetworkAction &a_action)
                 m_enemyBoard[i] = a_action.m_data.board[i];
                 qDebug() << (int)m_enemyBoard[i];
             }
+            setWaitingForEnemyBoard(false);
             break;
 
         case NetworkAction::Shot:
-
+            qDebug() << "I got a shot on " << a_action.m_data.point;
+            //TODO create other function that renders shots if not exists
+            //and execute here
+            //on point -> a_action.m_data.point;
+            setYourTurn(true);
             break;
-
         case NetworkAction::Surrend:
-
+            //TODO surrend
             break;
     }
 }

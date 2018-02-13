@@ -50,6 +50,8 @@ public:
     // user selected a tile to attack
     Q_INVOKABLE void attackTile(int x, int y);
 
+    Q_INVOKABLE void surrender();
+
 signals:
     void activeViewChanged();
     void shipsNeededChanged();

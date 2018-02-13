@@ -15,6 +15,13 @@ class Network : public QObject
     Q_OBJECT
 public:
 
+    enum NetworkState
+    {
+        None = 0,
+        Client,
+        Server
+    };
+
     static Network& getSingleton()
     {
         static Network singleton;
@@ -32,7 +39,9 @@ public:
 
     void sendMessage(const QByteArray &a_message);
 
-    bool isConnected();
+    bool isConnected() const;
+
+    NetworkState getNetworkState() const;
 
 
 signals:
@@ -51,12 +60,7 @@ private:
 
     static const quint16 m_port = 6969;
 
-    enum NetworkState
-    {
-        None = 0,
-        Client,
-        Server
-    };
+
 
     NetworkState m_networkState;
 
