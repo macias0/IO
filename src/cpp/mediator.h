@@ -76,6 +76,8 @@ private:
     // const and reference is used to help compiler optimize this function
     inline int positionToIndex(const int &x, const int &y);
 
+
+
     // active view which should be displayed in GUI
     EView::View m_activeView = EView::MainMenu;
     bool m_yourTurn;
@@ -99,6 +101,9 @@ private:
     bool m_userPlacesShips;
 
     Network &m_network = Network::getSingleton();
+
+private slots:
+    void enemyActionReceived(const NetworkAction &a_action);
 };
 
 #endif // MEDIATOR_H

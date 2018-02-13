@@ -17,6 +17,8 @@ public:
     };
     Q_ENUMS(Tile)
 
+
+
 };
 
 #endif // ETILE_H

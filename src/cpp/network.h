@@ -30,11 +30,14 @@ public:
     void disconnectFromServer();
 
 
-    void sendMessage(QByteArray &a_message);
+    void sendMessage(const QByteArray &a_message);
+
+    bool isConnected();
 
 
 signals:
     void messageReceived(const QByteArray &a_message);
+    void connected();
 
 
 private slots:
@@ -58,9 +61,12 @@ private:
     NetworkState m_networkState;
 
     QScopedPointer<QTcpServer> m_server;
-    QScopedPointer<QTcpSocket> m_client;
+    QScopedPointer<QTcpSocket> m_socket;
 
     quint16 m_messageSize = 0;
+
+
+    void prepareSocket();
 
 };
 

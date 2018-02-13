@@ -2,7 +2,16 @@
 
 Mediator::Mediator(QObject *parent) : QObject(parent)
 {
-    // nothing to do
+    // connecting signals
+    connect(&m_network, &Network::connected, [this]() //i love lambda ;]
+    {
+        qDebug() << "Connected";
+        startGame();
+    });
+    connect(&m_network, &Network::messageReceived, [this](const QByteArray a_message)
+    {
+        enemyActionReceived(a_message);
+    });
 }
 
 EView::View Mediator::activeView()
@@ -37,16 +46,14 @@ bool Mediator::waitingForEnemyBoard()
 
 void Mediator::createServer()
 {
-    // TODO create the server, wait for player, prepare the game
-
-    startGame(); /* TODO remove */
+    m_network.startServer();
+    // TODO block GUI, show 'waiting for connection' screen, add timeout
 }
 
 void Mediator::joinGame()
 {
-    // TODO join the game, prepare the game, or return error string with signal
-
-    startGame(); /* TODO remove */
+    m_network.connectToServer(QHostAddress::LocalHost);
+    // TODO block GUI, show 'waiting for connection' screen, add timeout
 }
 
 // TODO this function should probably change to something like "prepareTheGame"
@@ -74,9 +81,12 @@ void Mediator::exitGame()
 
 void Mediator::playerIsReady()
 {
-    // TODO share the board with the other player and prepare to start the game
-    // remember to set waitingForEnemyBoard while waiting for the other player to be ready
+    //sharing board with other player
+    m_network.sendMessage(NetworkAction(m_playerBoard));
+
+    // TODO remember to set waitingForEnemyBoard while waiting for the other player to be ready
     // set "yourTurn" variable
+
     setPreparingBoardPhase(false);
     setYourTurn(true);
 }
@@ -175,4 +185,28 @@ void Mediator::setWaitingForEnemyBoard(bool a_waitingForEnemyBoard)
 int Mediator::positionToIndex(const int &x, const int &y)
 {
     return x + y * g_boardWidth;
+}
+
+void Mediator::enemyActionReceived(const NetworkAction &a_action)
+{
+    qDebug() << "EnemyActionReceived, type: " << a_action.m_networkActionType;
+    switch(a_action.m_networkActionType)
+    {
+        case NetworkAction::BoardExchange:
+            qDebug() << "BoardExchange:";
+            for(int i=0; i<g_boardSize; ++i)
+            {
+                m_enemyBoard[i] = a_action.m_data.board[i];
+                qDebug() << (int)m_enemyBoard[i];
+            }
+            break;
+
+        case NetworkAction::Shot:
+
+            break;
+
+        case NetworkAction::Surrend:
+
+            break;
+    }
 }

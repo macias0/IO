@@ -24,6 +24,7 @@ NetworkAction::NetworkAction(const ETile::Tile (&a_board)[g_boardSize]) : Networ
 NetworkAction::NetworkAction(const QByteArray &a_data)
 {
     QDataStream dataStream(a_data);
+
     dataStream >> (int&)m_networkActionType;
     switch(m_networkActionType)
     {
@@ -54,7 +55,6 @@ NetworkAction::operator QByteArray() const
         case BoardExchange:
             for(int i=0; i<g_boardSize; ++i)
                 dataStream << (int)m_data.board[i];
-            break;
             break;
         default:
             break;
