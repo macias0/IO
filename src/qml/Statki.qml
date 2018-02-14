@@ -8,6 +8,8 @@ Item {
 
     readonly property int boardSize: 10
 
+    // TODOGUI handle newMessageToDisplay
+
     FontLoader {
         id: statkiFont
         source: 'qrc:/Assets/Fonts/It is Definitely Possible - TTF.ttf'

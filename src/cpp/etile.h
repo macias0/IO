@@ -16,9 +16,6 @@ public:
         ShotOccupied
     };
     Q_ENUMS(Tile)
-
-
-
 };
 
 #endif // ETILE_H

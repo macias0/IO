@@ -6,6 +6,8 @@ View {
 
     // readonly property var neededShips: {return [4, 3, 2, 1]}
 
+    // TODOGUI add surrender button
+
     QtObject {
         id: privateSpace
         property var renderedShips: []

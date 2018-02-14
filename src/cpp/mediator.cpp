@@ -2,6 +2,11 @@
 
 Mediator::Mediator(QObject *parent) : QObject(parent)
 {
+    setWaitingToConnect(false);
+    m_connectionTimeoutTimer.setInterval(m_connectionTimeout);
+    m_connectionTimeoutTimer.setSingleShot(true);
+    m_connectionTimeoutTimer.setTimerType(Qt::VeryCoarseTimer);
+
     // connecting signals
     connect(&m_network, &Network::connected, [this]() //i love lambda ;]
     {
@@ -12,6 +17,13 @@ Mediator::Mediator(QObject *parent) : QObject(parent)
     {
         enemyActionReceived(a_message);
     });
+    connect(&m_connectionTimeoutTimer, &QTimer::timeout, [this]()
+    {
+        qDebug() << "Connection timed out";
+        // TODO abort connection
+        emit newMessageToDisplay(m_connectionTimedOutMessage);
+    });
+
 }
 
 EView::View Mediator::activeView()
@@ -34,6 +46,11 @@ bool Mediator::boardIsValid()
     return m_boardIsValid;
 }
 
+bool Mediator::boardHasErrors()
+{
+    return m_boardHasErrors;
+}
+
 bool Mediator::preparingBoardPhase()
 {
     return m_preparingBoardPhase;
@@ -44,34 +61,141 @@ bool Mediator::waitingForEnemyBoard()
     return m_waitingForEnemyBoard;
 }
 
+bool Mediator::waitingToConnect()
+{
+    return m_waitingToConnect;
+}
+
 void Mediator::createServer()
 {
     m_network.startServer();
-    // TODO block GUI, show 'waiting for connection' screen, add timeout
+    setWaitingToConnect(true);
+    m_connectionTimeoutTimer.start();
 }
 
 void Mediator::joinGame()
 {
     m_network.connectToServer(QHostAddress::LocalHost);
-    // TODO block GUI, show 'waiting for connection' screen, add timeout
+    setWaitingToConnect(true);
+    m_connectionTimeoutTimer.start();
 }
 
-// TODO this function should probably change to something like "prepareTheGame"
-// or be completely removed - up to you
 void Mediator::startGame()
 {
     // initialize
     m_shipsNeeded = m_shipsTarget;
     for (int i = 0 ; i < g_boardSize ; i++)
+    {
+        if ((ETile::Occupied == m_playerBoard[i])
+                || (ETile::ShotOccupied == m_playerBoard[i]))
+        {
+            emit removeShip(i);
+        }
         m_playerBoard[i] = ETile::Empty;
+    }
     setBoardIsValid(false);
     setPreparingBoardPhase(true);
     setWaitingForEnemyBoard(true);
-
-    // TODO clear all rendered ships from previous game with removeShip() signal
+    setWaitingToConnect(false);
+    m_connectionTimeoutTimer.stop();
 
     emit shipsNeededChanged();
     setActiveView(EView::Game);
+}
+
+void Mediator::updateShipsNeeded()
+{
+    ETile::Tile boardCopy[g_boardSize];
+    memcpy(boardCopy, m_playerBoard, g_boardSize);
+
+    QList<int> m_shipsNeeded = m_shipsTarget;
+
+    for (int y = 0 ; y < g_boardHeight ; y++)
+    {
+        for (int x = 0 ; x < g_boardWidth ; x++)
+        {
+            int index = positionToIndex(x, y);
+            if (ETile::Occupied == boardCopy[index])
+            {
+                int shipLength = 1;
+                boardCopy[index] = ETile::Empty;
+
+                if ((x + 1 < g_boardWidth)
+                    && (ETile::Occupied == boardCopy[index + 1]))
+                {
+                    for (int _x = 1, _index = index + 1 ;
+                         (x + _x < g_boardWidth)
+                         && (ETile::Occupied == boardCopy[_index]) ;
+                         _x++, _index += 1)
+                    {
+                        shipLength++;
+                        boardCopy[_index] = ETile::Empty;
+                    }
+                }
+                else if ((y + 1 < g_boardHeight)
+                         && (ETile::Occupied == boardCopy[index + g_boardWidth]))
+                {
+                    for (int _y = 1, _index = index + g_boardWidth ;
+                         (y + _y < g_boardWidth)
+                         && (ETile::Occupied == boardCopy[_index]) ;
+                         _y++, _index += g_boardWidth)
+                    {
+                        shipLength++;
+                        boardCopy[_index] = ETile::Empty;
+                    }
+                }
+
+                if (shipLength <= m_shipsNeeded.length())
+                {
+                    m_shipsNeeded[shipLength - 1]--;
+                }
+            }
+        }
+    }
+
+    emit shipsNeededChanged();
+}
+
+void Mediator::updateBoardHasErrors()
+{
+    for (int y = 0 ; y < g_boardHeight - 1 ; y++)
+    {
+        for (int x = 0 ; x < g_boardWidth - 1 ; x++)
+        {
+            if ( isOccupied(x, y) /* center tile is occupied */
+                 && ( /* any of the neighbor corner tile is occupied */
+                      ( isOccupied(x - 1, y - 1)
+                        || isOccupied(x + 1, y - 1)
+                        || isOccupied(x - 1, y + 1)
+                        || isOccupied(x + 1, y + 1)
+                        )
+                      || ( /* or both horizontal or vertical neighbor tiles are occupied */
+                           ( (isOccupied(x - 1, y))
+                             || (isOccupied(x + 1, y)) )
+                           && ( (isOccupied(x, y - 1))
+                                || (isOccupied(x, y + 1)) ) ) ) )
+            {
+                setBoardHasErrors(true);
+                return;
+            }
+        }
+    }
+
+    setBoardHasErrors(false);
+}
+
+bool Mediator::isOnBoard(const int &x, const int &y)
+{
+    if ((x < 0) || (x >= g_boardWidth) || (y < 0) || (y >= g_boardHeight))
+        return false;
+    return true;
+}
+
+bool Mediator::isOccupied(const int &x, const int &y, const bool &enemyBoard)
+{
+    if (!isOnBoard(x, y))
+        return false;
+    return (ETile::Occupied == (enemyBoard ? m_enemyBoard : m_playerBoard)[positionToIndex(x, y)]);
 }
 
 void Mediator::exitGame()
@@ -113,46 +237,96 @@ void Mediator::toggleTile(int x, int y)
     else
         m_playerBoard[tile] = ETile::Empty;
 
-    // TODO update info about ships and send changes to GUI
-    // rendered ships may be stored in some container or just as points on the
-    // playerBoard. Up to you
-    // Code after this comment is to be changed, so the ships have proper length and orientation
-
     if (m_userPlacesShips) {
-        renderShip(tile, x, y, 1, false);
-        m_shipsNeeded[0]--;
+        renderShip(tile, x, y);
     } else {
         removeShip(tile);
-        m_shipsNeeded[0]++;
     }
 
-    bool boardIsValid = (m_shipsNeeded == m_shipsBoardValid);
-
-    // TODO check if ships are not too close each other
-    // boardIsValid = ...
-
-    setBoardIsValid(boardIsValid);
-
-    emit shipsNeededChanged();
+    updateShipsNeeded();
+    setBoardIsValid(m_shipsNeeded == m_shipsBoardValid);
+    updateBoardHasErrors();
 }
 
 void Mediator::attackTile(int x, int y)
 {
-    //TODO Forbid shooting when waitingForEnemyBoard == true
+    if (m_yourTurn)
+        attackTile(x, y, false);
+}
 
+void Mediator::attackTile(int x, int y, bool enemy)
+{
+    //TODO check if the game has been won or lost and end the session
+
+
+    ETile::Tile *boardToModify = enemy ? m_playerBoard : m_enemyBoard;
+    int shotIndex = positionToIndex(x, y);
     // if tile was already attacked, ignore - player has to choose other tile
-    if( m_enemyBoard[positionToIndex(x,y)] < ETile::ShotEmpty)
+    if (ETile::ShotEmpty <= boardToModify[shotIndex])
+        return;
+
+    if (!enemy)
     {
         qDebug() << "Sending attack message";
         m_network.sendMessage(NetworkAction(QPoint(x,y)));
     }
 
-    setYourTurn(false); //TODO not sure (?)
+    setYourTurn(enemy);
 
+    emit renderShot(x, y, (ETile::Occupied == boardToModify[shotIndex]), !enemy);
+    boardToModify[shotIndex] = static_cast<ETile::Tile>(boardToModify[shotIndex] + ETile::ShotEmpty);
+    if (isShipSunk(x, y, !enemy))
+        updateTilesAfterShipSunk(x, y, !enemy);
+}
 
-    //TODO create other function that renders shots if not exists
-    //and execute here
+bool Mediator::isShipSunk(int startX, int startY, bool enemyShip)
+{
+    QList<QPair<int, int>> tilesToCheck;
+    getShipTiles(startX, startY, enemyShip, tilesToCheck);
+    const ETile::Tile *boardToCheck = enemyShip ? m_enemyBoard : m_playerBoard;
+    for (const QPair<int, int> &tile : tilesToCheck)
+    {
+        if (ETile::Occupied == boardToCheck[positionToIndex(tile.first, tile.second)])
+            return false;
+    }
+    return true;
+}
 
+void Mediator::getShipTiles(int startX, int startY, bool enemyShip, QList<QPair<int, int>> &tiles)
+{
+    tiles.append(QPair<int, int>(startX, startY));
+    for (int y = -1 ; isOccupied(startX    , startY + y, enemyShip) ; y--)
+        tiles.append(QPair<int, int>(startX    , startY + y));
+    for (int x = -1 ; isOccupied(startX + x, startY    , enemyShip) ; x--)
+        tiles.append(QPair<int, int>(startX + x, startY    ));
+    for (int x =  1 ; isOccupied(startX + x, startY    , enemyShip) ; x++)
+        tiles.append(QPair<int, int>(startX + x, startY    ));
+    for (int y =  1 ; isOccupied(startX    , startY + y, enemyShip) ; y++)
+        tiles.append(QPair<int, int>(startX    , startY + y));
+}
+
+void Mediator::updateTilesAfterShipSunk(int startX, int startY, bool enemyShip)
+{
+    QList<QPair<int, int>> tilesToUpdate;
+    getShipTiles(startX, startY, enemyShip, tilesToUpdate);
+
+    for (const QPair<int, int> &tile : tilesToUpdate)
+    {
+        for (int y = -1 ; y <= 1 ; y++)
+        {
+            for (int x = -1 ; x <= 1 ; x++)
+            {
+                if (!isOnBoard(tile.first + x, tile.second + y))
+                    continue;
+                int index = positionToIndex(tile.first + x, tile.second + y);
+                if (ETile::Empty == (enemyShip ? m_enemyBoard : m_playerBoard)[index])
+                {
+                    (enemyShip ? m_enemyBoard : m_playerBoard)[index] = ETile::ShotEmpty;
+                    emit renderShot(x, y, false, enemyShip);
+                }
+            }
+        }
+    }
 }
 
 void Mediator::surrender()
@@ -186,6 +360,14 @@ void Mediator::setBoardIsValid(bool a_boardIsValid)
     }
 }
 
+void Mediator::setBoardHasErrors(bool a_boardHasErrors)
+{
+    if (m_boardHasErrors != a_boardHasErrors) {
+        m_boardHasErrors = a_boardHasErrors;
+        emit boardHasErrorsChanged();
+    }
+}
+
 void Mediator::setPreparingBoardPhase(bool a_preparingBoardPhase)
 {
     if (m_preparingBoardPhase != a_preparingBoardPhase) {
@@ -199,6 +381,14 @@ void Mediator::setWaitingForEnemyBoard(bool a_waitingForEnemyBoard)
     if (m_waitingForEnemyBoard != a_waitingForEnemyBoard) {
         m_waitingForEnemyBoard = a_waitingForEnemyBoard;
         emit waitingForEnemyBoardChanged();
+    }
+}
+
+void Mediator::setWaitingToConnect(bool a_waitingToConnect)
+{
+    if (m_waitingToConnect != a_waitingToConnect) {
+        m_waitingToConnect = a_waitingToConnect;
+        emit waitingToConnectChanged();
     }
 }
 
@@ -224,13 +414,12 @@ void Mediator::enemyActionReceived(const NetworkAction &a_action)
 
         case NetworkAction::Shot:
             qDebug() << "I got a shot on " << a_action.m_data.point;
-            //TODO create other function that renders shots if not exists
-            //and execute here
-            //on point -> a_action.m_data.point;
-            setYourTurn(true);
+            attackTile(a_action.m_data.point.x(), a_action.m_data.point.y(), true);
             break;
         case NetworkAction::Surrend:
-            //TODO surrend
+            // TODO ensure GUI cleans up
+            setActiveView(EView::MainMenu);
+            emit newMessageToDisplay(m_enemyHasSurrendered);
             break;
     }
 }

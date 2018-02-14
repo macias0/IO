@@ -2,6 +2,7 @@ import QtQuick 2.0
 import '../Common'
 
 View {
+    // TODOGUI handle waitingToConnect
 
     Image {
         anchors.fill: parent
