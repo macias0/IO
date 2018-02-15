@@ -40,6 +40,7 @@ void Network::startServer()
         if(m_connectionSocket.isNull())
         {
             m_connectionSocket.reset(m_server->nextPendingConnection());
+            m_broadcastTimer.stop();
             prepareSocket();
             m_networkState = NetworkState::Server;
         }
@@ -159,6 +160,7 @@ Network::NetworkState Network::getNetworkState() const
 
 void Network::prepareSocket()
 {
+
     m_broadcastSocket->close();
 
     connect(m_connectionSocket.data(), SIGNAL(readyRead()), this, SLOT(readyRead()));
