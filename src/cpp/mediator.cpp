@@ -71,6 +71,7 @@ void Mediator::createServer()
 {
     m_network.startServer();
     setWaitingToConnect(true);
+    setYourTurn(true);
     m_connectionTimeoutTimer.start();
 }
 
@@ -78,6 +79,7 @@ void Mediator::joinGame()
 {
     m_network.connectToServer();
     setWaitingToConnect(true);
+    setYourTurn(false);
     m_connectionTimeoutTimer.start();
 }
 
@@ -87,8 +89,8 @@ void Mediator::startGame()
     m_shipsNeeded = m_shipsTarget;
     for (int i = 0 ; i < g_boardSize ; i++)
     {
-        if ((ETile::Occupied == m_playerBoard[i])
-                || (ETile::ShotOccupied == m_playerBoard[i]))
+        if ( (ETile::Occupied == m_playerBoard[i])
+             || (ETile::ShotOccupied == m_playerBoard[i]) )
         {
             emit removeShip(i);
         }
@@ -100,6 +102,7 @@ void Mediator::startGame()
     setWaitingToConnect(false);
     m_connectionTimeoutTimer.stop();
 
+    emit prepareToNewGame();
     emit shipsNeededChanged();
     setActiveView(EView::Game);
 }
@@ -191,7 +194,8 @@ bool Mediator::isOccupied(const int &x, const int &y, const bool &enemyBoard)
 {
     if (!isOnBoard(x, y))
         return false;
-    return (ETile::Occupied == (enemyBoard ? m_enemyBoard : m_playerBoard)[positionToIndex(x, y)]);
+    ETile::Tile tile = (enemyBoard ? m_enemyBoard : m_playerBoard)[positionToIndex(x, y)];
+    return ((ETile::Occupied == tile) || (ETile::ShotOccupied == tile));
 }
 
 void Mediator::exitGame()
@@ -252,9 +256,6 @@ void Mediator::attackTile(int x, int y)
 
 void Mediator::attackTile(int x, int y, bool enemy)
 {
-    //TODO check if the game has been won or lost and end the session
-
-
     ETile::Tile *boardToModify = enemy ? m_playerBoard : m_enemyBoard;
     int shotIndex = positionToIndex(x, y);
     // if tile was already attacked, ignore - player has to choose other tile
@@ -267,12 +268,21 @@ void Mediator::attackTile(int x, int y, bool enemy)
         m_network.sendMessage(NetworkAction(QPoint(x,y)));
     }
 
-    setYourTurn(enemy);
+    // player missed - his/her turn ends
+    if (ETile::Empty == boardToModify[shotIndex])
+        setYourTurn(enemy);
 
     emit renderShot(x, y, (ETile::Occupied == boardToModify[shotIndex]), !enemy);
     boardToModify[shotIndex] = static_cast<ETile::Tile>(boardToModify[shotIndex] + ETile::ShotEmpty);
-    if (isShipSunk(x, y, !enemy))
+
+    if ( (ETile::ShotOccupied == boardToModify[shotIndex]) && (isShipSunk(x, y, !enemy)) ) {
+        if (!enemy)
+            emit newMessageToDisplay(m_shipWasSunked);
         updateTilesAfterShipSunk(x, y, !enemy);
+        if (!anyShipLeft(boardToModify)) {
+            setActiveView((enemy ? EView::GameOverDefeat : EView::GameOverWin));
+        }
+    }
 }
 
 bool Mediator::isShipSunk(int startX, int startY, bool enemyShip)
@@ -318,11 +328,20 @@ void Mediator::updateTilesAfterShipSunk(int startX, int startY, bool enemyShip)
                 if (ETile::Empty == (enemyShip ? m_enemyBoard : m_playerBoard)[index])
                 {
                     (enemyShip ? m_enemyBoard : m_playerBoard)[index] = ETile::ShotEmpty;
-                    emit renderShot(x, y, false, enemyShip);
+                    emit renderShot(tile.first + x, tile.second + y, false, enemyShip);
                 }
             }
         }
     }
+}
+
+bool Mediator::anyShipLeft(ETile::Tile *a_boardToCheck)
+{
+    for (int i = 0 ; i < g_boardSize ; i++) {
+        if (ETile::Occupied == a_boardToCheck[i])
+            return true;
+    }
+    return false;
 }
 
 void Mediator::surrender()
@@ -330,6 +349,14 @@ void Mediator::surrender()
     m_network.sendMessage(NetworkAction());
 
     //TODO shutdown server / disconnect
+}
+
+void Mediator::goBackToMainMenu()
+{
+    if (EView::Game == activeView()) {
+        // TODO disconnect
+    }
+    setActiveView(EView::MainMenu);
 }
 
 void Mediator::setActiveView(EView::View a_activeView)

@@ -19,4 +19,16 @@ Item {
         anchors.fill: parent
         isActive: activeView == EView.Game
     }
+
+    Views.GameOverWin {
+        id: gameOverWin
+        anchors.fill: parent
+        isActive: activeView == EView.GameOverWin
+    }
+
+    Views.GameOverDefeat {
+        id: gameOverDefeat
+        anchors.fill: parent
+        isActive: activeView == EView.GameOverDefeat
+    }
 }

@@ -5,7 +5,9 @@ Item {
 
     property string text: ''
     property color buttonColor: 'white'
+    property int textAlignment: Text.AlignLeft
     signal clicked()
+    readonly property alias textPaintedWidth: text.paintedWidth
 
     Text {
         id: text
@@ -16,12 +18,12 @@ Item {
         font.family: statkiFont.name
         color: buttonColor
         verticalAlignment: Text.AlignVCenter
-        horizontalAlignment: Text.AlignLeft
+        horizontalAlignment: textAlignment
     }
 
     Item {
         id: underlineContainer
-        x: text.x
+        x: text.x + (text.width - text.paintedWidth) * (textAlignment === Text.AlignLeft ? 0 : 0.5)
         y: parent.height - height - text.anchors.margins / 2
         width: text.paintedWidth
         height: parent.height / 40

@@ -29,7 +29,7 @@ Item {
         width: textObject.paintedWidth + height
         height: parent.height
         radius: height / 2
-        color: "#40000000"
+        color: "#80000000"
         opacity: 0
         Text {
             id: textObject

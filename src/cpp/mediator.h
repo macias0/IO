@@ -58,6 +58,9 @@ public:
 
     Q_INVOKABLE void surrender();
 
+    // user requests going back to main menu
+    Q_INVOKABLE void goBackToMainMenu();
+
 signals:
     void activeViewChanged();
     void shipsNeededChanged();
@@ -67,6 +70,7 @@ signals:
     void preparingBoardPhaseChanged();
     void waitingForEnemyBoardChanged();
     void waitingToConnectChanged();
+    void prepareToNewGame();
 
     // id is a unique value, used then in removeShip()
     void renderShip(int id, int x, int y);
@@ -87,6 +91,7 @@ private:
     bool isShipSunk(int startX, int startY, bool enemyShip);
     void getShipTiles(int startX, int startY, bool enemyShip, QList<QPair<int, int>> &tiles);
     void updateTilesAfterShipSunk(int startX, int startY, bool enemyShip);
+    bool anyShipLeft(ETile::Tile *a_boardToCheck);
 
     void setActiveView(EView::View a_activeView);
     void setYourTurn(bool a_yourTurn);
@@ -103,7 +108,7 @@ private:
 #endif
 
     // active view which should be displayed in GUI
-    EView::View m_activeView = EView::MainMenu;
+    EView::View m_activeView = EView::GameOverWin;
     bool m_yourTurn;
     bool m_boardIsValid;
     bool m_boardHasErrors;
@@ -114,11 +119,11 @@ private:
     // [1-cell ship, 2-cells ship, 3-cells ship, 4-cells ship]
     QList<int> m_shipsNeeded;
     // list of target amounts of ships per type
-    const QList<int> m_shipsTarget = {4, 3, 2, 1};
-    const QList<int> m_shipsBoardValid = {0, 0, 0, 0};
+    const QList<int> m_shipsTarget = {4, 3, 2, 1, 0, 0, 0, 0, 0, 0};
+    const QList<int> m_shipsBoardValid = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    ETile::Tile m_playerBoard[g_boardSize];
-    ETile::Tile m_enemyBoard[g_boardSize];
+    ETile::Tile m_playerBoard[g_boardSize] = {ETile::Empty};
+    ETile::Tile m_enemyBoard[g_boardSize] = {ETile::Empty};
 
     // current user's action
     bool m_userPlacesShips;
@@ -131,6 +136,7 @@ private:
     // GUI messages
     const QString m_connectionTimedOutMessage = "Nie udało się znaleźć przeciwnika!";
     const QString m_enemyHasSurrendered = "Przeciwnik się poddał!";
+    const QString m_shipWasSunked = "Trafiony, zatopiony!";
 
 private slots:
     void enemyActionReceived(const NetworkAction &a_action);

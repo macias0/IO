@@ -13,5 +13,10 @@
         <file>Assets/Images/water.jpeg</file>
         <file>Assets/Images/grid.png</file>
         <file>MessageBox.qml</file>
+        <file>Common/WaitingWindow.qml</file>
+        <file>Views/GameOverWin.qml</file>
+        <file>Views/GameOverDefeat.qml</file>
+        <file>Assets/Images/BlueSkyBoat.jpeg</file>
+        <file>Assets/Images/SunsetBoat.jpeg</file>
     </qresource>
 </RCC>
