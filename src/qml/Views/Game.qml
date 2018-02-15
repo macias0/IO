@@ -40,6 +40,7 @@ View {
         target: mediator
 
         onShipsNeededChanged: {
+            console.log("shipsneeded:", mediator.shipsNeeded)
         }
         onRenderShip: { //(int id, int x, int y, int length, bool horizontal);
             privateSpace.renderedShips[id] = smallShipComponent.createObject(boardMouseArea, {"posX": x, "posY": y});
