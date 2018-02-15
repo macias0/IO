@@ -112,7 +112,7 @@ private:
 #endif
 
     // active view which should be displayed in GUI
-    EView::View m_activeView = EView::GameOverWin;
+    EView::View m_activeView = EView::MainMenu;
     bool m_yourTurn;
     bool m_boardIsValid;
     bool m_boardHasErrors;

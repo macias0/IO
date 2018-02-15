@@ -37,7 +37,8 @@ View {
                 <br><div style="font-size:'+font.pixelSize*1.5+'px;">Podziękowania dla:</div><br><br>
                 - Miguel Á. Padriñán<br>
                 - Misti<br>
-                - Lukas<br><br>
+                - Lukas<br>
+                - Pixabay<br><br>
                 za udostępnienie zasobów.'
                 color: "#e5b13a"
                 wrapMode: Text.WordWrap
