@@ -21,6 +21,7 @@ Mediator::Mediator(QObject *parent) : QObject(parent)
     {
         qDebug() << "Connection timed out";
         // TODO abort connection
+        setWaitingToConnect(false);
         emit newMessageToDisplay(m_connectionTimedOutMessage);
     });
 
