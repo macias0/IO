@@ -337,6 +337,11 @@ void Mediator::showCredits()
     setActiveView(EView::Credits);
 }
 
+void Mediator::exitFromCredits()
+{
+    setActiveView(EView::MainMenu);
+}
+
 void Mediator::setActiveView(EView::View a_activeView)
 {
     if (m_activeView != a_activeView) {

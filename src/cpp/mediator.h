@@ -60,6 +60,8 @@ public:
 
     Q_INVOKABLE void showCredits();
 
+    Q_INVOKABLE void exitFromCredits();
+
 signals:
     void activeViewChanged();
     void shipsNeededChanged();

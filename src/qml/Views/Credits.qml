@@ -61,6 +61,11 @@ View {
             from: flick.contentY
             duration: 30000
             running: credits.isActive
+            onRunningChanged:
+            {
+                if(!running)
+                    mediator.exitFromCredits();
+            }
 
         }
 
