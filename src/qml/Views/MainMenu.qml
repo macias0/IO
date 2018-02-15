@@ -54,6 +54,9 @@ View {
                 width: button1.width
                 height: button1.height
                 text: 'Autorzy'
+                onClicked: {
+                    mediator.showCredits()
+                }
             }
 
             Button {

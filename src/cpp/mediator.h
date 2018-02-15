@@ -58,6 +58,8 @@ public:
 
     Q_INVOKABLE void surrender();
 
+    Q_INVOKABLE void showCredits();
+
 signals:
     void activeViewChanged();
     void shipsNeededChanged();

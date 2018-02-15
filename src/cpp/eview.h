@@ -11,7 +11,8 @@ public:
 
     enum View {
         MainMenu,
-        Game
+        Game,
+        Credits
     };
     Q_ENUMS(View)
 

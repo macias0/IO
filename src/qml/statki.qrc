@@ -13,5 +13,7 @@
         <file>Assets/Images/water.jpeg</file>
         <file>Assets/Images/grid.png</file>
         <file>MessageBox.qml</file>
+        <file>Views/Credits.qml</file>
+        <file>Assets/Fonts/Franklin Gothic Demi Regular.ttf</file>
     </qresource>
 </RCC>

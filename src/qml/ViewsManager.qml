@@ -19,4 +19,10 @@ Item {
         anchors.fill: parent
         isActive: activeView == EView.Game
     }
+
+    Views.Credits {
+        id: credits
+        anchors.fill: parent;
+        isActive: activeView == EView.Credits
+    }
 }

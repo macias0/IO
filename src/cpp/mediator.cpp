@@ -332,6 +332,11 @@ void Mediator::surrender()
     //TODO shutdown server / disconnect
 }
 
+void Mediator::showCredits()
+{
+    setActiveView(EView::Credits);
+}
+
 void Mediator::setActiveView(EView::View a_activeView)
 {
     if (m_activeView != a_activeView) {
