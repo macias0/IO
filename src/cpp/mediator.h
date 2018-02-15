@@ -129,8 +129,8 @@ private:
     QTimer m_connectionTimeoutTimer;
 
     // GUI messages
-    const QString m_connectionTimedOutMessage = "Could not connect! Please try again";
-    const QString m_enemyHasSurrendered = "The enemy has surrendered!";
+    const QString m_connectionTimedOutMessage = "Nie udało się znaleźć przeciwnika!";
+    const QString m_enemyHasSurrendered = "Przeciwnik się poddał!";
 
 private slots:
     void enemyActionReceived(const NetworkAction &a_action);

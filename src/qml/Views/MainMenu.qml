@@ -100,6 +100,7 @@ View {
                 anchors.centerIn: parent;
                 property string displayText: "Waiting for connection"
                 text: displayText
+                color: "white"
                 font.family: statkiFont.name
                 horizontalAlignment: Text.AlignLeft
                 verticalAlignment:  Text.AlignVCenter

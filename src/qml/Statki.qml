@@ -8,7 +8,12 @@ Item {
 
     readonly property int boardSize: 10
 
-    // TODOGUI handle newMessageToDisplay
+    Connections {
+        target: mediator
+        onNewMessageToDisplay: {
+            messageBox.nextMessage(message)
+        }
+    }
 
     FontLoader {
         id: statkiFont
@@ -19,5 +24,12 @@ Item {
         id: viewsManager
         anchors.fill: parent
         activeView: mediator.activeView
+    }
+
+    MessageBox {
+        id: messageBox
+        y: parent.height - height * 2
+        width: parent.width
+        height: parent.height * 0.08
     }
 }

@@ -12,5 +12,6 @@
         <file>Assets/Images/PaperBoatPhoto.jpg</file>
         <file>Assets/Images/water.jpeg</file>
         <file>Assets/Images/grid.png</file>
+        <file>MessageBox.qml</file>
     </qresource>
 </RCC>
