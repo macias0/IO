@@ -52,6 +52,9 @@ void Network::startServer()
 }
 void Network::stopServer()
 {
+    m_broadcastTimer.stop();
+    m_broadcastSocket->close();
+    m_broadcastSocket.take()->deleteLater();
     m_server->close();
     m_server.take()->deleteLater();
     m_connectionSocket->close();
@@ -89,6 +92,8 @@ void Network::connectToServer()
 
 void Network::disconnectFromServer()
 {
+    m_broadcastSocket->close();
+    m_broadcastSocket.take()->deleteLater();
     m_connectionSocket->close();
     m_connectionSocket.take()->deleteLater();
     m_networkState = NetworkState::None;
