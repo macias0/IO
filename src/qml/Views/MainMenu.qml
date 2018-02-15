@@ -67,5 +67,66 @@ View {
         }
     }
 
+    Rectangle
+    {
+        id: waitingForConnectionContainer
+        anchors.fill: parent;
+        visible: mediator.waitingToConnect
+        color: "transparent"
+
+        //blocking GUI
+        MultiPointTouchArea
+        {
+            anchors.fill: parent;
+        }
+
+        Rectangle //blur
+        {
+            opacity: 0.6
+            color: "white"
+            anchors.fill: parent;
+        }
+
+        Rectangle
+        {
+            color: '#40000000'
+            radius: width / 20
+            anchors.centerIn: parent;
+            width: parent.width / 2
+            height: width / 4
+            Text
+            {
+                id: waitingForConnectionText
+                anchors.centerIn: parent;
+                property string displayText: "Waiting for connection"
+                text: displayText
+                font.family: statkiFont.name
+                horizontalAlignment: Text.AlignLeft
+                verticalAlignment:  Text.AlignVCenter
+                font.pixelSize: height / 2
+                width: parent.width / 2
+                height: parent.height / 2
+            }
+            Timer
+            {
+                property int counter: 0;
+                interval: 500
+                running: waitingForConnectionContainer.visible
+                repeat: true
+                onTriggered:
+                {
+                    waitingForConnectionText.text += "."
+                    counter++;
+                    if(counter==5)
+                    {
+                        waitingForConnectionText.text = waitingForConnectionText.displayText
+                        counter = 0;
+                    }
+                }
+
+            }
+        }
+    }
+
 
 }
