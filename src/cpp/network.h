@@ -54,7 +54,7 @@ private slots:
 
 private:
     //for singleton
-    explicit Network(QObject *parent = nullptr);
+    explicit Network(QObject *a_parent = nullptr);
     Network(const Network&) = delete;
     void operator=(const Network&) = delete;
 

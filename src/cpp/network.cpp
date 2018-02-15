@@ -2,7 +2,7 @@
 #include <QDataStream>
 #include <QNetworkInterface>
 
-Network::Network(QObject *parent) : QObject(parent)
+Network::Network(QObject *a_parent) : QObject(a_parent)
 {
     connect(&m_broadcastTimer, SIGNAL(timeout()), this, SLOT(sendBroadcastMessage()));
     m_broadcastTimer.setInterval(m_broadcastInterval);
