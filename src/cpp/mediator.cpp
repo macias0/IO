@@ -75,7 +75,7 @@ void Mediator::createServer()
 
 void Mediator::joinGame()
 {
-    m_network.connectToServer(QHostAddress::LocalHost);
+    m_network.connectToServer();
     setWaitingToConnect(true);
     m_connectionTimeoutTimer.start();
 }

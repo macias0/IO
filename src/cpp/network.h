@@ -2,12 +2,10 @@
 #define NETWORK_H
 
 #include <QObject>
-//#include <QHostAddress>
 #include <QTcpServer>
 #include <QTcpSocket>
-
-
-
+#include <QUdpSocket>
+#include <QTimer>
 
 
 class Network : public QObject
@@ -18,6 +16,7 @@ public:
     enum NetworkState
     {
         None = 0,
+        Broadcast,
         Client,
         Server
     };
@@ -33,7 +32,7 @@ public:
     void startServer();
     void stopServer();
 
-    void connectToServer(QHostAddress a_address);
+    void connectToServer();
     void disconnectFromServer();
 
 
@@ -51,6 +50,7 @@ signals:
 
 private slots:
     void readyRead();
+    void sendBroadcastMessage();
 
 private:
     //for singleton
@@ -58,14 +58,23 @@ private:
     Network(const Network&) = delete;
     void operator=(const Network&) = delete;
 
-    static const quint16 m_port = 6969;
+    static const quint16 m_connectionPort = 6969;
+    static const quint16 m_broadcastPort = 6968;
+
+    static const int m_broadcastInterval = 1000; //ms
 
 
 
     NetworkState m_networkState;
 
     QScopedPointer<QTcpServer> m_server;
-    QScopedPointer<QTcpSocket> m_socket;
+    QScopedPointer<QTcpSocket> m_connectionSocket;
+    QScopedPointer<QUdpSocket> m_broadcastSocket;
+
+    QHostAddress m_localAddress;
+
+
+    QTimer m_broadcastTimer;
 
     quint16 m_messageSize = 0;
 
