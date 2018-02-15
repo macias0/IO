@@ -20,7 +20,7 @@ Mediator::Mediator(QObject *parent) : QObject(parent)
     connect(&m_connectionTimeoutTimer, &QTimer::timeout, [this]()
     {
         qDebug() << "Connection timed out";
-        // TODO abort connection
+        m_network.stop();
         setWaitingToConnect(false);
         emit newMessageToDisplay(m_connectionTimedOutMessage);
     });
@@ -356,6 +356,16 @@ void Mediator::goBackToMainMenu()
     if (EView::Game == activeView()) {
         // TODO disconnect
     }
+    setActiveView(EView::MainMenu);
+}
+
+void Mediator::showCredits()
+{
+    setActiveView(EView::Credits);
+}
+
+void Mediator::exitFromCredits()
+{
     setActiveView(EView::MainMenu);
 }
 

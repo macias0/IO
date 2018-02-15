@@ -12,6 +12,7 @@ public:
     enum View {
         MainMenu,
         Game,
+        Credits,
         GameOverWin,
         GameOverDefeat
     };

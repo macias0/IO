@@ -31,4 +31,10 @@ Item {
         anchors.fill: parent
         isActive: activeView == EView.GameOverDefeat
     }
+	
+    Views.Credits {
+        id: credits
+        anchors.fill: parent;
+        isActive: activeView == EView.Credits
+    }
 }

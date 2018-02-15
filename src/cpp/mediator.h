@@ -60,6 +60,10 @@ public:
 
     // user requests going back to main menu
     Q_INVOKABLE void goBackToMainMenu();
+	
+    Q_INVOKABLE void showCredits();
+
+    Q_INVOKABLE void exitFromCredits();
 
 signals:
     void activeViewChanged();

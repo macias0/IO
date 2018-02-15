@@ -20,6 +20,11 @@ Item {
         source: 'qrc:/Assets/Fonts/It is Definitely Possible - TTF.ttf'
     }
 
+    FontLoader {
+        id: starWarsFont
+        source: 'qrc:/Assets/Fonts/Franklin Gothic Demi Regular.ttf'
+    }
+
     ViewsManager {
         id: viewsManager
         anchors.fill: parent
