@@ -20,10 +20,7 @@ Network::Network(QObject *a_parent) : QObject(a_parent)
 
 Network::~Network()
 {
-    if(m_networkState == Client)
-        disconnectFromServer();
-    else if(m_networkState == Server)
-        stopServer();
+    stop();
 }
 
 void Network::startServer()
@@ -50,17 +47,7 @@ void Network::startServer()
 
 
 }
-void Network::stopServer()
-{
-    m_broadcastTimer.stop();
-    m_broadcastSocket->close();
-    m_broadcastSocket.take()->deleteLater();
-    m_server->close();
-    m_server.take()->deleteLater();
-    m_connectionSocket->close();
-    m_connectionSocket.take()->deleteLater();
-    m_networkState = NetworkState::None;
-}
+
 
 void Network::connectToServer()
 {
@@ -90,15 +77,31 @@ void Network::connectToServer()
 
 }
 
-void Network::disconnectFromServer()
+void Network::stop()
 {
-    m_broadcastSocket->close();
-    m_broadcastSocket.take()->deleteLater();
-    m_connectionSocket->close();
-    m_connectionSocket.take()->deleteLater();
-    m_networkState = NetworkState::None;
-
+    if(m_networkState != NetworkState::None)
+    {
+        m_broadcastTimer.stop();
+        if(!m_broadcastSocket.isNull())
+            {
+            m_broadcastSocket->close();
+            m_broadcastSocket.take()->deleteLater();
+        }
+        if(!m_server.isNull())
+        {
+            m_server->close();
+            m_server.take()->deleteLater();
+        }
+        if(!m_connectionSocket.isNull())
+        {
+            m_connectionSocket->close();
+            m_connectionSocket.take()->deleteLater();
+        }
+        m_networkState = NetworkState::None;
+    }
 }
+
+
 
 void Network::readyRead()
 {

@@ -21,25 +21,20 @@ public:
         Server
     };
 
+
     static Network& getSingleton()
     {
         static Network singleton;
         return singleton;
     }
-
     ~Network();
 
+
     void startServer();
-    void stopServer();
-
+    void stop();
     void connectToServer();
-    void disconnectFromServer();
-
-
     void sendMessage(const QByteArray &a_message);
-
     bool isConnected() const;
-
     NetworkState getNetworkState() const;
 
 
@@ -58,24 +53,18 @@ private:
     Network(const Network&) = delete;
     void operator=(const Network&) = delete;
 
+
     static const quint16 m_connectionPort = 6969;
     static const quint16 m_broadcastPort = 6968;
-
     static const int m_broadcastInterval = 1000; //ms
 
 
-
     NetworkState m_networkState;
-
+    QHostAddress m_localAddress;
     QScopedPointer<QTcpServer> m_server;
     QScopedPointer<QTcpSocket> m_connectionSocket;
     QScopedPointer<QUdpSocket> m_broadcastSocket;
-
-    QHostAddress m_localAddress;
-
-
     QTimer m_broadcastTimer;
-
     quint16 m_messageSize = 0;
 
 
