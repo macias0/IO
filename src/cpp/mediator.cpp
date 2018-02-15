@@ -106,9 +106,9 @@ void Mediator::startGame()
 void Mediator::updateShipsNeeded()
 {
     ETile::Tile boardCopy[g_boardSize];
-    memcpy(boardCopy, m_playerBoard, g_boardSize);
+    std::copy(m_playerBoard, m_playerBoard + g_boardSize, boardCopy);
 
-    QList<int> m_shipsNeeded = m_shipsTarget;
+    m_shipsNeeded = m_shipsTarget;
 
     for (int y = 0 ; y < g_boardHeight ; y++)
     {
@@ -120,23 +120,18 @@ void Mediator::updateShipsNeeded()
                 int shipLength = 1;
                 boardCopy[index] = ETile::Empty;
 
-                if ((x + 1 < g_boardWidth)
-                    && (ETile::Occupied == boardCopy[index + 1]))
+                for (int _x = x + 1, _index = index + 1 ;
+                     (_x < g_boardWidth)
+                     && (ETile::Occupied == boardCopy[_index]) ;
+                     _x++, _index += 1)
                 {
-                    for (int _x = 1, _index = index + 1 ;
-                         (x + _x < g_boardWidth)
-                         && (ETile::Occupied == boardCopy[_index]) ;
-                         _x++, _index += 1)
-                    {
-                        shipLength++;
-                        boardCopy[_index] = ETile::Empty;
-                    }
+                    shipLength++;
+                    boardCopy[_index] = ETile::Empty;
                 }
-                else if ((y + 1 < g_boardHeight)
-                         && (ETile::Occupied == boardCopy[index + g_boardWidth]))
+                if (shipLength == 1)
                 {
-                    for (int _y = 1, _index = index + g_boardWidth ;
-                         (y + _y < g_boardWidth)
+                    for (int _y = y + 1, _index = index + g_boardWidth ;
+                         (_y < g_boardWidth)
                          && (ETile::Occupied == boardCopy[_index]) ;
                          _y++, _index += g_boardWidth)
                     {
@@ -396,6 +391,22 @@ int Mediator::positionToIndex(const int &x, const int &y)
 {
     return x + y * g_boardWidth;
 }
+
+#ifdef ENABLE_DEBUG_BOARD_PRINTS
+void Mediator::debugPrintBoard(const ETile::Tile *a_board)
+{
+    int index = 0;
+    for (int y = 0 ; y < g_boardHeight ; y++)
+    {
+        for (int x = 0 ; x < g_boardWidth ; x++)
+        {
+            std::cout << a_board[index];
+            index++;
+        }
+        std::cout << std::endl;
+    }
+}
+#endif
 
 void Mediator::enemyActionReceived(const NetworkAction &a_action)
 {

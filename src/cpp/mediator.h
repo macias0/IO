@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QObject>
 #include <QCoreApplication>
+#include <iostream>
 
 #include "commons.h"
 #include "eview.h"
@@ -97,7 +98,9 @@ private:
     // const and reference is used to help compiler optimize this function
     inline int positionToIndex(const int &x, const int &y);
 
-
+#ifdef ENABLE_DEBUG_BOARD_PRINTS
+    void debugPrintBoard(const ETile::Tile *a_board);
+#endif
 
     // active view which should be displayed in GUI
     EView::View m_activeView = EView::MainMenu;
