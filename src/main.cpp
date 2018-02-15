@@ -5,7 +5,6 @@
 
 #include "cpp/mediator.h"
 
-#include "cpp/networkaction.h" //TODO delete (?)
 
 int main(int argc, char *argv[])
 {
