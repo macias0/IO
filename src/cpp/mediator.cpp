@@ -291,7 +291,6 @@ bool Mediator::isShipSunk(int startX, int startY, bool enemyShip)
     getShipTiles(startX, startY, enemyShip, tilesToCheck);
     const ETile::Tile *boardToCheck = enemyShip ? m_enemyBoard : m_playerBoard;
     QList<QPair<int, int>>::iterator tileIterator = tilesToCheck.begin();
-//    for (const QPair<int, int> &tile : tilesToCheck)
     while (tileIterator != tilesToCheck.end())
     {
         if (ETile::Occupied == boardToCheck[positionToIndex(tileIterator->first, tileIterator->second)])
